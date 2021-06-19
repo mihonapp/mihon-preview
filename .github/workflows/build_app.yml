@@ -111,7 +111,7 @@ jobs:
             ---
 
             MD5 (universal): ${{ env.APK_UNIVERSAL_MD5 }}
-            MD5 (arm74-v8a): ${{ env.APK_ARM64_V8A_MD5 }}
+            MD5 (arm64-v8a): ${{ env.APK_ARM64_V8A_MD5 }}
             MD5 (armeabi-v7a): ${{ env.APK_ARMEABI_V7A_MD5 }}
             MD5 (x86): ${{ env.APK_X86_MD5 }}
           files: |
