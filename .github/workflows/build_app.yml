@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.inputs.git-ref }}
 
-      - name: Set up JDK 11
+      - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
@@ -45,7 +45,7 @@ jobs:
           exclude_types: "draft|prerelease"
           view_top: 1
 
-      - name: Prepare build metadata
+      - name: Prepare build
         run: |
           set -e
 
@@ -66,13 +66,13 @@ jobs:
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
 
-      - name: Set up keystore
-        run: mkdir -p ~/.android/ && echo "${{ secrets.DEBUG_KEYSTORE }}" | base64 --decode > ~/.android/debug.keystore
+          mkdir -p ~/.android/ && echo "${{ secrets.DEBUG_KEYSTORE }}" | base64 --decode > ~/.android/debug.keystore
+
       - name: Build APK
-        uses: eskatos/gradle-command-action@v1
+        uses: gradle/gradle-command-action@v1
         with:
           arguments: assembleStandardDebug
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
 
