@@ -69,12 +69,9 @@ jobs:
           mkdir -p ~/.android/ && echo "${{ secrets.DEBUG_KEYSTORE }}" | base64 --decode > ~/.android/debug.keystore
 
       - name: Build APK
-        uses: gradle/gradle-command-action@v1
+        uses: gradle/gradle-command-action@v2
         with:
           arguments: assembleStandardPreview
-          distributions-cache-enabled: true
-          dependencies-cache-enabled: true
-          configuration-cache-enabled: true
 
       - name: Clean up build artifacts
         run: |
