@@ -19,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: 'tachiyomiorg/tachiyomi'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'tachiyomiorg/tachiyomi'
@@ -33,9 +33,10 @@ jobs:
           ref: ${{ github.event.inputs.git-ref }}
 
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
+          distribution: adopt
 
       - name: Get previous release
         id: last_release
