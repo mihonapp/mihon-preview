@@ -145,3 +145,12 @@ jobs:
         with:
           keep_latest: 28
           delete_tags: true
+
+  update-website:
+    needs: [build-app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify build hook
+        run: curl -s -X POST -d {} "https://api.netlify.com/build_hooks/${TOKEN}"
+        env:
+          TOKEN: ${{ secrets.NETLIFY_HOOK_RELEASE }}
