@@ -38,6 +38,10 @@ jobs:
           java-version: 17
           distribution: adopt
 
+      - name: Setup Android SDK
+        run: |
+          ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.3"
+
       - name: Get previous release
         id: last_release
         uses: InsonusK/get-latest-release@v1.1.0
