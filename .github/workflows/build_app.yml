@@ -80,9 +80,10 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/apk/standard/preview
-          signingKeyBase64: ${{ secrets.DEBUG_KEYSTORE }}
-          alias: androiddebugkey
-          keyStorePassword: android
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Clean up build artifacts
         run: |
@@ -147,16 +148,7 @@ jobs:
       - name: Prune old releases
         uses: dev-drprasad/delete-older-releases@v0.3.2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         with:
           keep_latest: 28
           delete_tags: true
-
-  update-website:
-    needs: [build-app]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Netlify build hook
-        run: curl -s -X POST -d {} "https://api.netlify.com/build_hooks/${TOKEN}"
-        env:
-          TOKEN: ${{ secrets.NETLIFY_HOOK_RELEASE }}
