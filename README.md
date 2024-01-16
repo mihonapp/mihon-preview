@@ -4,6 +4,6 @@
 
 This repository houses the preview builds for [Mihon](https://github.com/mihonapp/mihon).
 
-For downloads, see [Releases](https://github.com/mihonorg/android-app-preview/releases).
+For downloads, see [Releases](https://github.com/mihonapp/mihon-preview/releases).
 
 To download the stable release, see https://mihon.app/download/
