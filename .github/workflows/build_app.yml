@@ -72,7 +72,7 @@ jobs:
           {delimiter}" >> $GITHUB_ENV
 
       - name: Build APK
-        uses: gradle/gradle-command-action@v2
+        uses: gradle/gradle-command-action@v3
         with:
           arguments: assembleStandardPreview
 
