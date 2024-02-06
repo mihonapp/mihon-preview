@@ -71,10 +71,11 @@ jobs:
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
 
+      - name: Set up gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build APK
-        uses: gradle/gradle-command-action@v2
-        with:
-          arguments: assembleStandardPreview
+        run: ./gradlew assembleStandardPreview
 
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
