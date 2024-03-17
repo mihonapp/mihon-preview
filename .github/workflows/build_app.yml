@@ -144,12 +144,12 @@ jobs:
           draft: ${{ github.event.inputs.dry-run != '' }}
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prune old releases
         uses: dev-drprasad/delete-older-releases@v0.3.2
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           keep_latest: 28
           delete_tags: true
