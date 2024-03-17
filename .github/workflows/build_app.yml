@@ -19,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.event.inputs.git-ref }}
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           java-version: 17
           distribution: adopt
@@ -44,7 +44,7 @@ jobs:
 
       - name: Get previous release
         id: last_release
-        uses: InsonusK/get-latest-release@v1.1.0
+        uses: InsonusK/get-latest-release@7a9ff16c8c6b7ead5d71c0f1cc61f2703170eade # v1.1.0
         with:
           myToken: ${{ github.token }}
           exclude_types: "draft|prerelease"
@@ -72,13 +72,13 @@ jobs:
           {delimiter}" >> $GITHUB_ENV
 
       - name: Set up gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@29c0906b64b8fc82467890bfb7a0a7ef34bda89e # v3.1.0
 
       - name: Build APK
         run: ./gradlew assembleStandardPreview
 
       - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@/349ebdef58775b1e0d8099458af0816dc79b6407 # v1
         with:
           releaseDirectory: app/build/outputs/apk/standard/preview
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
@@ -111,7 +111,7 @@ jobs:
           echo "APK_X86_64_SHA=$sha" >> $GITHUB_ENV
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@d99959edae48b5ffffd7b00da66dcdb0a33a52ee # v2.0.2
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Mihon Preview r${{ env.COMMIT_COUNT }}
@@ -147,7 +147,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prune old releases
-        uses: dev-drprasad/delete-older-releases@v0.3.2
+        uses: dev-drprasad/delete-older-releases@0bf4e6748f08135170c2294f877ba7d9b633b028 # v0.3.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
