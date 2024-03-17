@@ -111,7 +111,7 @@ jobs:
           echo "APK_X86_64_SHA=$sha" >> $GITHUB_ENV
 
       - name: Create release
-        uses: softprops/action-gh-release@d99959edae48b5ffffd7b00da66dcdb0a33a52ee # v2.0.2
+        uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564 # v2.0.4
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Mihon Preview r${{ env.COMMIT_COUNT }}
