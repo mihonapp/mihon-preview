@@ -19,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
