@@ -72,7 +72,7 @@ jobs:
           {delimiter}" >> $GITHUB_ENV
 
       - name: Set up gradle
-        uses: gradle/actions/setup-gradle@d156388eb19639ec20ade50009f3d199ce1e2808 # v4.1.0
+        uses: gradle/actions/setup-gradle@cc4fc85e6b35bafd578d5ffbc76a5518407e1af0 # v4.2.1
 
       - name: Build APK
         run: ./gradlew assembleStandardPreview
@@ -111,7 +111,7 @@ jobs:
           echo "APK_X86_64_SHA=$sha" >> $GITHUB_ENV
 
       - name: Create release
-        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8
+        uses: softprops/action-gh-release@01570a1f39cb168c169c802c3bceb9e93fb10974 # v2.1.0
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Mihon Preview r${{ env.COMMIT_COUNT }}
