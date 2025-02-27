@@ -1,9 +1,9 @@
 name: Build job
 
 on:
-  # Every Thursday at 18:00 UTC
+  # Every Thursday at 17:30 UTC
   schedule:
-    - cron: '0 18 * * 4'
+    - cron: '30 17 * * 4'
   # Manual triggers
   workflow_dispatch:
     inputs:
@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     name: Build app
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-24.04'
 
     steps:
       - name: Clone Repository (Latest)
@@ -47,20 +47,22 @@ jobs:
         run: ./gradlew assemblePreview -Pwith-analytics -Pwith-updater
 
       - name: Sign APK
-        uses: r0adkll/sign-android-release@349ebdef58775b1e0d8099458af0816dc79b6407 # v1
+        uses: r0adkll/sign-android-release@f30bdd30588842ac76044ecdbd4b6d0e3e813478
         with:
           releaseDirectory: app/build/outputs/apk/preview
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: '35.0.1'
 
       - name: Get previous release
         id: last_release
         uses: InsonusK/get-latest-release@7a9ff16c8c6b7ead5d71c0f1cc61f2703170eade # v1.1.0
         with:
           myToken: ${{ github.token }}
-          exclude_types: "draft|prerelease"
+          exclude_types: 'draft|prerelease'
           view_top: 1
 
       - name: Prepare changelog
