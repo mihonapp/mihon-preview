@@ -8,7 +8,7 @@ on:
       - edited
 
 jobs:
-  post_release:
+  update_website:
     runs-on: 'ubuntu-24.04'
 
     steps:
