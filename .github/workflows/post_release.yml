@@ -2,7 +2,10 @@ name: Post release
 
 on:
   release:
-    types: [published]
+    types: 
+      - published
+      - unpublished
+      - edited
 
 jobs:
   post_release:
