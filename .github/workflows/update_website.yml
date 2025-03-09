@@ -1,4 +1,4 @@
-name: Post release
+name: Update website
 
 on:
   release:
