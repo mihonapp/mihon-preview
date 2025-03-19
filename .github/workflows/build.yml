@@ -44,7 +44,7 @@ jobs:
         uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4.3.0
 
       - name: Build APK
-        run: ./gradlew assemblePreview -Pinclude-analytics -Penable-updater
+        run: ./gradlew assemblePreview -Pinclude-telemetry -Penable-updater
 
       - name: Sign APK
         uses: r0adkll/sign-android-release@f30bdd30588842ac76044ecdbd4b6d0e3e813478
