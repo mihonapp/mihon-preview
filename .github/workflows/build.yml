@@ -19,7 +19,6 @@ jobs:
   build:
     name: Build app
     runs-on: 'ubuntu-24.04'
-
     steps:
       - name: Clone Repository (Latest)
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -58,14 +57,6 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: '35.0.1'
 
-      - name: Get previous release
-        id: last_release
-        uses: InsonusK/get-latest-release@7a9ff16c8c6b7ead5d71c0f1cc61f2703170eade # v1.1.0
-        with:
-          myToken: ${{ github.token }}
-          exclude_types: 'draft|prerelease'
-          view_top: 1
-
       - name: Prepare changelog
         run: |
           set -e
@@ -75,7 +66,15 @@ jobs:
           current_sha=$(git rev-parse --short HEAD)
           echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
 
-          prev_commit_count=$(echo "${{ steps.last_release.outputs.tag_name }}" | sed -e "s/^r//")
+          tag_name=$(gh release list --repo mihonapp/mihon-preview --exclude-drafts --exclude-pre-releases --json tagName --limit 1 --jq 'select(length > 0) | .[0].tagName')
+          if [ -n "$tag_name" ]; then
+            echo "Latest Tag: $tag_name"
+          else
+            echo "Failed to get repository information"
+            exit 1
+          fi
+
+          prev_commit_count=$(echo "$tag_name" | sed -e "s/^r//")
           commit_count_diff=$(expr $commit_count - $prev_commit_count)
           prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
           echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
