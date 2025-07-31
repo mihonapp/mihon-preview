@@ -66,15 +66,15 @@ jobs:
           current_sha=$(git rev-parse --short HEAD)
           echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
 
-          OUTPUT=$(gh release list --repo mihonapp/mihon-preview --exclude-drafts --exclude-pre-releases --json tagName --limit 1 --jq 'select(length > 0) | .[0].tagName')
-          if [ -n "$OUTPUT" ]; then
-            echo "Latest Tag: $OUTPUT"
+          tag_name=$(gh release list --repo mihonapp/mihon-preview --exclude-drafts --exclude-pre-releases --json tagName --limit 1 --jq 'select(length > 0) | .[0].tagName')
+          if [ -n "$tag_name" ]; then
+            echo "Latest Tag: $tag_name"
           else
             echo "Failed to get repository information"
             exit 1
           fi
 
-          prev_commit_count=$(echo "$OUTPUT" | sed -e "s/^r//")
+          prev_commit_count=$(echo "$tag_name" | sed -e "s/^r//")
           commit_count_diff=$(expr $commit_count - $prev_commit_count)
           prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
           echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
