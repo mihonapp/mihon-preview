@@ -13,6 +13,7 @@ on:
       dry-run:
         description: Creates a draft release
         required: false
+        type: boolean
 
 jobs:
   build:
@@ -90,11 +91,11 @@ jobs:
         run: |
           set -e
 
-          cp app/build/outputs/apk/preview/app-universal-preview-signed.apk mihon-r${{ env.COMMIT_COUNT }}.apk
-          cp app/build/outputs/apk/preview/app-arm64-v8a-preview-signed.apk mihon-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
-          cp app/build/outputs/apk/preview/app-armeabi-v7a-preview-signed.apk mihon-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
-          cp app/build/outputs/apk/preview/app-x86-preview-signed.apk mihon-x86-r${{ env.COMMIT_COUNT }}.apk
-          cp app/build/outputs/apk/preview/app-x86_64-preview-signed.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/preview/app-universal-preview-signed.apk mihon-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/preview/app-arm64-v8a-preview-signed.apk mihon-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/preview/app-armeabi-v7a-preview-signed.apk mihon-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/preview/app-x86-preview-signed.apk mihon-x86-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/preview/app-x86_64-preview-signed.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
 
       - name: Create release
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
@@ -108,16 +109,16 @@ jobs:
 
             ${{ env.COMMIT_LOGS }}
 
-            ---
-            
-            ## If you are unsure which apk to download then go with mihon-r${{ env.COMMIT_COUNT }}.apk
+            > [!TIP]
+            >
+            > ### If you are unsure which version to download then go with `mihon-r${{ env.COMMIT_COUNT }}.apk`
           files: |
             mihon-r${{ env.COMMIT_COUNT }}.apk
             mihon-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
             mihon-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
             mihon-x86-r${{ env.COMMIT_COUNT }}.apk
             mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
-          draft: ${{ github.event.inputs.dry-run != '' }}
+          draft: ${{ github.event.inputs.dry-run }}
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.MIHON_BOT_TOKEN }}
