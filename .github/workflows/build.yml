@@ -58,6 +58,8 @@ jobs:
           BUILD_TOOLS_VERSION: '35.0.1'
 
       - name: Prepare changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
 
