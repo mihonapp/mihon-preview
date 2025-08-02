@@ -110,6 +110,7 @@ jobs:
 
             ${{ env.COMMIT_LOGS }}
 
+            <!-->
             > [!TIP]
             >
             > ### If you are unsure which version to download then go with `mihon-r${{ env.COMMIT_COUNT }}.apk`
