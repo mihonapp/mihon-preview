@@ -21,13 +21,13 @@ jobs:
     runs-on: 'ubuntu-24.04'
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
@@ -35,7 +35,7 @@ jobs:
           ref: ${{ github.event.inputs.git-ref }}
 
       - name: Set up JDK
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
         with:
           java-version: 17
           distribution: temurin
@@ -99,7 +99,7 @@ jobs:
           mv app/build/outputs/apk/preview/app-x86_64-preview-signed.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
 
       - name: Create release
-        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2.4.1
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Mihon Preview r${{ env.COMMIT_COUNT }}
