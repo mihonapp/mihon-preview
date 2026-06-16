@@ -21,13 +21,13 @@ jobs:
     runs-on: 'ubuntu-24.04'
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
@@ -41,7 +41,7 @@ jobs:
           distribution: temurin
 
       - name: Set up gradle
-        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
 
       - name: Build APK
         run: ./gradlew assemblePreview -Pinclude-telemetry -Penable-updater
