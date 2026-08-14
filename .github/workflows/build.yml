@@ -1,9 +1,9 @@
 name: Build job
 
 on:
-  # Every Thursday at 17:30 UTC
+  # Every day at 17:30 UTC
   schedule:
-    - cron: '30 17 * * 4'
+    - cron: '30 17 * * *'
   # Manual triggers
   workflow_dispatch:
     inputs:
@@ -19,9 +19,68 @@ env:
   MIHON_GITHUB_RELEASE: true
 
 jobs:
+  check:
+    name: Check for new commits
+    runs-on: 'ubuntu-24.04'
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+      commit-count: ${{ steps.check.outputs.commit-count }}
+      current-sha: ${{ steps.check.outputs.current-sha }}
+      prev-tag: ${{ steps.check.outputs.prev-tag }}
+    steps:
+      - name: Clone Repository (Latest)
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: 'mihonapp/mihon'
+          fetch-depth: 0
+          filter: blob:none
+        if: github.event.inputs.git-ref == ''
+      - name: Clone Repository (Custom Ref)
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        if: github.event.inputs.git-ref != ''
+        with:
+          repository: 'mihonapp/mihon'
+          fetch-depth: 0
+          filter: blob:none
+          ref: ${{ github.event.inputs.git-ref }}
+
+      - name: Compare against latest release
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          commit_count=$(git rev-list --count HEAD)
+          echo "commit-count=$commit_count" >> $GITHUB_OUTPUT
+          echo "current-sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+          tag_name=$(gh release list --repo mihonapp/mihon-preview --exclude-drafts --exclude-pre-releases --json tagName --limit 1 --jq 'select(length > 0) | .[0].tagName')
+          if [ -n "$tag_name" ]; then
+            echo "Latest Tag: $tag_name"
+          else
+            echo "Failed to get repository information"
+            exit 1
+          fi
+          echo "prev-tag=$tag_name" >> $GITHUB_OUTPUT
+
+          prev_commit_count=$(echo "$tag_name" | sed -e "s/^r//")
+          if [ "$commit_count" -le "$prev_commit_count" ] && [ "${{ github.event_name }}" = 'schedule' ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No new commits since $tag_name, skipping build"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
   build:
     name: Build app
+    needs: check
+    if: needs.check.outputs.skip != 'true'
     runs-on: 'ubuntu-24.04'
+    env:
+      COMMIT_COUNT: ${{ needs.check.outputs.commit-count }}
+      CURRENT_SHA: ${{ needs.check.outputs.current-sha }}
+      PREV_TAG: ${{ needs.check.outputs.prev-tag }}
     steps:
       - name: Clone Repository (Latest)
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -47,7 +106,7 @@ jobs:
         uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
 
       - name: Build APK
-        run: ./gradlew assemblePreview -Pinclude-telemetry -Penable-updater
+        run: ./gradlew assembleNightly -Pinclude-telemetry -Penable-updater
         env:
           storeFileBase64: ${{ secrets.SIGNING_KEY }}
           storePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -60,27 +119,14 @@ jobs:
         run: |
           set -e
 
-          commit_count=$(git rev-list --count HEAD)
-          echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
-          current_sha=$(git rev-parse --short HEAD)
-          echo "CURRENT_SHA=$current_sha" >> $GITHUB_ENV
-
-          tag_name=$(gh release list --repo mihonapp/mihon-preview --exclude-drafts --exclude-pre-releases --json tagName --limit 1 --jq 'select(length > 0) | .[0].tagName')
-          if [ -n "$tag_name" ]; then
-            echo "Latest Tag: $tag_name"
-          else
-            echo "Failed to get repository information"
-            exit 1
-          fi
-
-          prev_commit_count=$(echo "$tag_name" | sed -e "s/^r//")
-          commit_count_diff=$(expr $commit_count - $prev_commit_count)
+          prev_commit_count=$(echo "${{ env.PREV_TAG }}" | sed -e "s/^r//")
+          commit_count_diff=$(expr ${{ env.COMMIT_COUNT }} - $prev_commit_count)
           prev_release_sha=$(git rev-parse --short HEAD~$commit_count_diff)
           echo "PREV_RELEASE_SHA=$prev_release_sha" >> $GITHUB_ENV
 
           echo "COMMIT_LOGS<<{delimiter}
           $(curl -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/mihonapp/mihon/compare/$prev_release_sha...$current_sha" \
+            "https://api.github.com/repos/mihonapp/mihon/compare/$prev_release_sha...${{ env.CURRENT_SHA }}" \
             | jq '[.commits[]|{message:(.commit.message | split("\n")), username:.author.login}]' \
             | jq -r '.[]|"- \(.message | first) (@\(.username))"')
           {delimiter}" >> $GITHUB_ENV
@@ -89,17 +135,17 @@ jobs:
         run: |
           set -e
 
-          mv app/build/outputs/apk/preview/app-universal-preview.apk mihon-r${{ env.COMMIT_COUNT }}.apk
-          mv app/build/outputs/apk/preview/app-arm64-v8a-preview.apk mihon-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
-          mv app/build/outputs/apk/preview/app-armeabi-v7a-preview.apk mihon-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
-          mv app/build/outputs/apk/preview/app-x86-preview.apk mihon-x86-r${{ env.COMMIT_COUNT }}.apk
-          mv app/build/outputs/apk/preview/app-x86_64-preview.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/nightly/app-universal-nightly.apk mihon-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/nightly/app-arm64-v8a-nightly.apk mihon-arm64-v8a-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/nightly/app-armeabi-v7a-nightly.apk mihon-armeabi-v7a-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/nightly/app-x86-nightly.apk mihon-x86-r${{ env.COMMIT_COUNT }}.apk
+          mv app/build/outputs/apk/nightly/app-x86_64-nightly.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
 
       - name: Create release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
-          name: Mihon Preview r${{ env.COMMIT_COUNT }}
+          name: Mihon Nightly r${{ env.COMMIT_COUNT }}
           body: |
             ### Commits
 
