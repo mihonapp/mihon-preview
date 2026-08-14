@@ -173,5 +173,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MIHON_BOT_TOKEN }}
         with:
-          keep_latest: 28
+          keep_latest: 365
           delete_tags: true
