@@ -165,8 +165,7 @@ jobs:
             mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
           draft: ${{ github.event.inputs.dry-run }}
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.MIHON_BOT_TOKEN }}
+          token: ${{ secrets.MIHON_BOT_TOKEN }}
 
       - name: Prune old releases
         uses: dev-drprasad/delete-older-releases@dfbe6be2a006e9475dfcbe5b8d201f1824c2a9fe # v0.3.4
