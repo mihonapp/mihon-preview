@@ -29,14 +29,14 @@ jobs:
       prev-tag: ${{ steps.check.outputs.prev-tag }}
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
           filter: blob:none
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
@@ -83,13 +83,13 @@ jobs:
       PREV_TAG: ${{ needs.check.outputs.prev-tag }}
     steps:
       - name: Clone Repository (Latest)
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'mihonapp/mihon'
           fetch-depth: 0
         if: github.event.inputs.git-ref == ''
       - name: Clone Repository (Custom Ref)
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: github.event.inputs.git-ref != ''
         with:
           repository: 'mihonapp/mihon'
@@ -97,13 +97,13 @@ jobs:
           ref: ${{ github.event.inputs.git-ref }}
 
       - name: Set up JDK
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
         with:
           java-version: 25
           distribution: temurin
 
       - name: Set up gradle
-        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+        uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
 
       - name: Build APK
         run: ./gradlew assembleNightly -Pinclude-telemetry -Penable-updater
@@ -142,7 +142,7 @@ jobs:
           mv app/build/outputs/apk/nightly/app-x86_64-nightly.apk mihon-x86_64-r${{ env.COMMIT_COUNT }}.apk
 
       - name: Create release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           tag_name: r${{ env.COMMIT_COUNT }}
           name: Mihon Nightly r${{ env.COMMIT_COUNT }}
