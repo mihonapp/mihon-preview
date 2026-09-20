@@ -106,7 +106,7 @@ jobs:
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
 
       - name: Build APK
-        run: ./gradlew assembleNightly -Pinclude-telemetry -Penable-updater
+        run: ./gradlew assembleNightly -Pdist=github
         env:
           storeFileBase64: ${{ secrets.SIGNING_KEY }}
           storePassword: ${{ secrets.KEY_STORE_PASSWORD }}
