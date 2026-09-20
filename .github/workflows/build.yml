@@ -105,10 +105,15 @@ jobs:
       - name: Set up gradle
         uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
 
+      - name: Decode signing keystore
+        run: echo "$SIGNING_KEY" | base64 -d > "${{ runner.temp }}/antsy.keystore"
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+
       - name: Build APK
         run: ./gradlew assembleNightly -Pdist=github
         env:
-          storeFileBase64: ${{ secrets.SIGNING_KEY }}
+          storeFile: ${{ runner.temp }}/antsy.keystore
           storePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyAlias: ${{ secrets.ALIAS }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
